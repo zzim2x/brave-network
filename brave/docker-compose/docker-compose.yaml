@@ -33,7 +33,7 @@ services:
     image: zzim2x/stellar-core-quorum:9.2.0
     env_file: ["core.env"]
     command: "core1 initdb forcescp"
-    volumes: ["db1-unixsocket:/var/run/postgres"]
+    volumes: ["db1-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core2", "core3", "core4"]'
     ports:
@@ -43,7 +43,7 @@ services:
     image: zzim2x/stellar-core-quorum:9.2.0
     env_file: ["core.env"]
     command: "core2 initdb forcescp"
-    volumes: ["db2-unixsocket:/var/run/postgres"]
+    volumes: ["db2-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core1", "core3", "core4"]'
     ports:
@@ -53,7 +53,7 @@ services:
     image: zzim2x/stellar-core-quorum:9.2.0
     env_file: ["core.env"]
     command: "core3 initdb forcescp"
-    volumes: ["db3-unixsocket:/var/run/postgres"]
+    volumes: ["db3-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core1", "core2", "core4"]'
     ports:
@@ -63,7 +63,7 @@ services:
     image: zzim2x/stellar-core-quorum:9.2.0
     env_file: ["core.env"]
     command: "core4 initdb forcescp"
-    volumes: ["db4-unixsocket:/var/run/postgres"]
+    volumes: ["db4-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core1", "core2", "core3"]'
     ports:
@@ -80,3 +80,4 @@ volumes:
   db4-unixsocket:
   dbh-data:
   dbh-unixsocket:
+  history-data:
