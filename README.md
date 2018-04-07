@@ -2,12 +2,13 @@
 
 **Independent stellar network; Brave Network**
 
-* https://github.com/zzim2x/stellar-docker : docker image
-* https://hub.docker.com/r/zzim2x : auto build
+* [docker image](https://github.com/zzim2x/stellar-docker)
+* [automated build](https://hub.docker.com/r/zzim2x)
 
 ## init
 
-validator 노드로 쓸 만큼 stellar-core --genseed 생성해서 설정에 추가
+* validator 노드로 쓸 만큼 `stellar-core --genseed` 생성해서 설정에 추가.
+* `stellar-core --convertid` 로 PubKey 추출.
 
 ## docker-compose
 
@@ -17,3 +18,4 @@ docker-compose 기반으로 작성. 생각보다 깔끔하게 나오지 않는�
 
 잘 동작하나 체크용
 
+[상세 문서](https://github.com/zzim2x/brave-network/wiki/Brave-Network)
