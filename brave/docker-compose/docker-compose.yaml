@@ -12,6 +12,22 @@ services:
   db4:
     image: stellar/stellar-core-state
     volumes: ["db4-data:/var/lib/postgresql/data", "db4-unixsocket:/postgresql-unix-sockets"]
+  dbh:  # postgres for horizon
+    image: stellar/stellar-core-state
+    volumes: ["dbh-data:/var/lib/postgresql/data", "dbh-unixsocket:/postgresql-unix-sockets"]
+
+  horizon:
+    image: zzim2x/stellar-horizon:0.12.3
+    command: "initdb serve"
+    env_file: ["core.env"]
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_UNIX_SOCKET: "/var/run/postgres"
+      POSTGRES_CORE_UNIX_SOCKET: "/var/run/postgres-core"
+      STELLAR_CORE_URL: "http://core1:11626"
+    volumes: ["db1-unixsocket:/var/run/postgres-core", "dbh-unixsocket:/var/run/postgres"]
+    depends_on: ["db1", "dbh", "core1"]
 
   core1:
     image: zzim2x/stellar-core-quorum:9.2.0
@@ -62,3 +78,5 @@ volumes:
   db3-unixsocket:
   db4-data:
   db4-unixsocket:
+  dbh-data:
+  dbh-unixsocket:
