@@ -1,0 +1,7 @@
+package: github.com/zzim2x/brave-network/brave-e2e
+import:
+- package: github.com/jinzhu/configor
+- package: github.com/spf13/cobra
+  version: ~0.0.2
+- package: github.com/spf13/pflag
+  version: ~1.0.0

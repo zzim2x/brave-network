@@ -1,0 +1,5 @@
+network:
+  # default network passphrase
+  passphrase: "Public Brave Stellar Network ; April 2018"
+  # horizon server url
+  horizon: "http://127.0.0.1:8000"
