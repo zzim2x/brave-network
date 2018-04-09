@@ -26,6 +26,7 @@ services:
       POSTGRES_UNIX_SOCKET: "/var/run/postgres"
       POSTGRES_CORE_UNIX_SOCKET: "/var/run/postgres-core"
       STELLAR_CORE_URL: "http://core1:11626"
+      SERVE_OPTS: "--ingest=true"
     volumes: ["db1-unixsocket:/var/run/postgres-core", "dbh-unixsocket:/var/run/postgres"]
     depends_on: ["db1", "dbh", "core1"]
 
