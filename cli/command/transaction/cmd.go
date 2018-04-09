@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/stellar/go/build"
 	"github.com/stellar/go/clients/horizon"
-	"net/http"
 )
 
 func NewTransactionCommand(cli *command.BraveCli) *cobra.Command {
@@ -16,14 +15,9 @@ func NewTransactionCommand(cli *command.BraveCli) *cobra.Command {
 		Long:  "",
 	}
 
-	client := &horizon.Client{
-		URL: cli.Network.Horizon,
-		HTTP: http.DefaultClient,
-	}
-
-	createAccount := &cobra.Command{
-		Use:   "create",
-		Short: "create",
+	fund := &cobra.Command{
+		Use:   "fund",
+		Short: "fund",
 		Long:  "create account with initial balance",
 		Run: func(cmd *cobra.Command, args []string) {
 			seed := cmd.Flags().Lookup("seed").Value.String()
@@ -31,12 +25,12 @@ func NewTransactionCommand(cli *command.BraveCli) *cobra.Command {
 			amount := cmd.Flags().Lookup("amount").Value.String()
 
 			tx, err := build.Transaction(
-				build.Network{cli.Network.Passphrase},
-				build.SourceAccount{seed},
-				build.AutoSequence{client},
+				build.Network{Passphrase: cli.Network.Passphrase},
+				build.SourceAccount{AddressOrSeed: seed},
+				build.AutoSequence{SequenceProvider: cli.HorizonClient()},
 				build.CreateAccount(
-					build.Destination{address},
-					build.NativeAmount{amount},
+					build.Destination{AddressOrSeed: address},
+					build.NativeAmount{Amount: amount},
 				),
 			)
 
@@ -44,16 +38,16 @@ func NewTransactionCommand(cli *command.BraveCli) *cobra.Command {
 				panic(err)
 			}
 
-			submit(client, tx, seed)
+			submit(cli.HorizonClient(), tx, seed)
 		},
 	}
 
-	createAccount.Flags().String("seed", "", "")
-	createAccount.Flags().String("address", "", "")
-	createAccount.Flags().String("amount", "", "")
-	createAccount.MarkFlagRequired("seed")
-	createAccount.MarkFlagRequired("address")
-	createAccount.MarkFlagRequired("amount")
+	fund.Flags().String("seed", "", "")
+	fund.Flags().String("address", "", "")
+	fund.Flags().String("amount", "", "")
+	fund.MarkFlagRequired("seed")
+	fund.MarkFlagRequired("address")
+	fund.MarkFlagRequired("amount")
 
 	payment := &cobra.Command{
 		Use:   "payment",
@@ -65,12 +59,12 @@ func NewTransactionCommand(cli *command.BraveCli) *cobra.Command {
 			amount := cmd.Flags().Lookup("amount").Value.String()
 
 			tx, err := build.Transaction(
-				build.Network{cli.Network.Passphrase},
-				build.SourceAccount{seed},
-				build.AutoSequence{client},
+				build.Network{Passphrase: cli.Network.Passphrase},
+				build.SourceAccount{AddressOrSeed: seed},
+				build.AutoSequence{SequenceProvider: cli.HorizonClient()},
 				build.Payment(
-					build.Destination{address},
-					build.NativeAmount{amount},
+					build.Destination{AddressOrSeed: address},
+					build.NativeAmount{Amount: amount},
 				),
 			)
 
@@ -78,7 +72,7 @@ func NewTransactionCommand(cli *command.BraveCli) *cobra.Command {
 				panic(err)
 			}
 
-			submit(client, tx, seed)
+			submit(cli.HorizonClient(), tx, seed)
 		},
 	}
 
@@ -89,7 +83,7 @@ func NewTransactionCommand(cli *command.BraveCli) *cobra.Command {
 	payment.MarkFlagRequired("address")
 	payment.MarkFlagRequired("amount")
 
-	cmd.AddCommand(createAccount, payment)
+	cmd.AddCommand(fund, payment)
 
 	return cmd
 }
