@@ -37,6 +37,7 @@ services:
     volumes: ["db1-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core2", "core3", "core4"]'
+      COMMANDS: '["ll?level=trace"]'
     ports:
       - "11681:11626"
     depends_on: ["db1"]
