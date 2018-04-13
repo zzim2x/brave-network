@@ -37,7 +37,7 @@ services:
     volumes: ["db1-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core2", "core3", "core4"]'
-      COMMANDS: '["ll?level=trace"]'
+      COMMANDS: '["ll?level=debug"]'
     ports:
       - "11681:11626"
     depends_on: ["db1"]
@@ -48,6 +48,7 @@ services:
     volumes: ["db2-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core1", "core3", "core4"]'
+      COMMANDS: '["ll?level=debug"]'
     ports:
       - "11682:11626"
     depends_on: ["db2"]
@@ -58,6 +59,7 @@ services:
     volumes: ["db3-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core1", "core2", "core4"]'
+      COMMANDS: '["ll?level=debug"]'
     ports:
       - "11683:11626"
     depends_on: ["db3"]
@@ -68,6 +70,7 @@ services:
     volumes: ["db4-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core1", "core2", "core3"]'
+      COMMANDS: '["ll?level=debug"]'
     ports:
       - "11684:11626"
     depends_on: ["db4"]

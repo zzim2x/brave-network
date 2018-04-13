@@ -20,7 +20,17 @@ func NewAccountCommand(cli *command.BraveCli) *cobra.Command {
 		Long:  "",
 		Run: func(cmd *cobra.Command, args []string) {
 			alias := cmd.Flags().Lookup("alias").Value.String()
-			account, err := cli.HorizonClient().LoadAccount(cli.Account[alias])
+			address := cmd.Flags().Lookup("address").Value.String()
+
+			if alias != "" {
+				address = cli.Account[alias]
+			} else if address == "" {
+				cmd.Usage()
+				return
+			}
+
+			account, err := cli.HorizonClient().LoadAccount(address)
+
 			if err == nil {
 				fmt.Println("My account address:", account.AccountID)
 				for _, v := range account.Balances {
@@ -36,8 +46,8 @@ func NewAccountCommand(cli *command.BraveCli) *cobra.Command {
 		},
 	}
 
-	balance.Flags().String("alias", "", "")
-	balance.MarkFlagRequired("alias")
+	balance.Flags().String("alias", "", "config.yaml 설정된 계정 alias")
+	balance.Flags().String("address", "", "계좌 주소")
 
 	cmd.AddCommand(balance)
 
