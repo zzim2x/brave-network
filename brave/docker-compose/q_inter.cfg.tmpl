@@ -1,0 +1,99 @@
+NETWORK_PASSPHRASE="{{getenv "NETWORK_PASSPHRASE"}}"
+RUN_STANDALONE=false
+NODE_IS_VALIDATOR=true
+
+PEER_PORT={{getenv "PEER_PORT"}}
+HTTP_PORT={{getenv "HTTP_PORT"}}
+PUBLIC_HTTP_PORT=true
+
+DATABASE="postgresql://dbname={{getenv "POSTGRES_DBNAME"}} user={{getenv "POSTGRES_USERNAME"}} host={{getenv "POSTGRES_UNIX_SOCKET"}}"
+
+{{if (getenv (printf "%s_NODE_SEED" (getenv "SELF"))) }}NODE_SEED="{{getenv (printf "%s_NODE_SEED" (getenv "SELF"))}}"{{end}}
+MAX_PEER_CONNECTIONS={{getenv "MAX_PEER_CONNECTIONS"}}
+KNOWN_PEERS={{getenv "KNOWN_PEERS"}}
+
+{{if (getenv "NTP_SERVER") -}}
+NTP_SERVER="{{getenv "NTP_SERVER"}}"
+{{- end}}
+{{if (getenv "NODE_NAMES") -}}
+NODE_NAMES={{getenv "NODE_NAMES"}}
+{{- end}}
+{{if (getenv "UNSAFE_QUORUM") -}}
+UNSAFE_QUORUM={{getenv "UNSAFE_QUORUM"}}
+{{- end}}
+{{if (getenv "PREFERRED_PEERS") -}}
+PREFERRED_PEERS={{getenv "PREFERRED_PEERS"}}
+{{- end}}
+
+{{if (getenv "CATCHUP_COMPLETE") -}}
+CATCHUP_COMPLETE={{getenv "CATCHUP_COMPLETE"}}
+{{- end}}
+{{if (getenv "CATCHUP_RECENT") -}}
+CATCHUP_RECENT={{getenv "CATCHUP_RECENT"}}
+{{- end}}
+{{if (getenv "NODE_IS_VALIDATOR") -}}
+NODE_IS_VALIDATOR={{getenv "NODE_IS_VALIDATOR"}}
+{{- end}}
+
+{{if (getenv "TARGET_PEER_CONNECTIONS") -}}
+TARGET_PEER_CONNECTIONS={{getenv "TARGET_PEER_CONNECTIONS"}}{{else}}TARGET_PEER_CONNECTIONS=32
+{{- end}}
+{{if (getenv "MAX_CONCURRENT_SUBPROCESSES") -}}
+MAX_CONCURRENT_SUBPROCESSES={{getenv "MAX_CONCURRENT_SUBPROCESSES"}}{{else}}MAX_CONCURRENT_SUBPROCESSES=64
+{{- end}}
+
+{{if (getenv "COMMANDS") -}}
+COMMANDS={{getenv "COMMANDS"}}
+{{- end}}
+{{if (getenv "FAILURE_SAFETY") -}}
+FAILURE_SAFETY={{getenv "FAILURE_SAFETY"}}
+{{- end}}
+
+{{if (getenv "ARTIFICIALLY_GENERATE_LOAD_FOR_TESTING") -}}
+ARTIFICIALLY_GENERATE_LOAD_FOR_TESTING={{getenv "ARTIFICIALLY_GENERATE_LOAD_FOR_TESTING"}}
+{{- end}}
+
+LOG_FILE_PATH="/opt/stellar/logs"
+BUCKET_DIR_PATH="/opt/stellar/buckets"
+
+[QUORUM_SET]
+{{if (getenv "THRESHOLD_PERCENT") -}}
+THRESHOLD_PERCENT={{getenv "THRESHOLD_PERCENT"}}
+{{- end}}
+VALIDATORS={{getenv "VALIDATORS"}}
+
+[HISTORY.core1]
+get="cp /opt/stellar-core/history/core1/{0} {1}"
+put="cp {0} /opt/stellar-core/history/core1/{1}"
+mkdir="mkdir -p /opt/stellar-core/history/core1/{0}"
+
+[HISTORY.core2]
+get="cp /opt/stellar-core/history/core2/{0} {1}"
+put="cp {0} /opt/stellar-core/history/core2/{1}"
+mkdir="mkdir -p /opt/stellar-core/history/core2/{0}"
+
+[HISTORY.core3]
+get="cp /opt/stellar-core/history/core3/{0} {1}"
+put="cp {0} /opt/stellar-core/history/core3/{1}"
+mkdir="mkdir -p /opt/stellar-core/history/core3/{0}"
+
+[HISTORY.core4]
+get="cp /opt/stellar-core/history/core4/{0} {1}"
+put="cp {0} /opt/stellar-core/history/core4/{1}"
+mkdir="mkdir -p /opt/stellar-core/history/core4/{0}"
+
+[HISTORY.core5]
+get="cp /opt/stellar-core/history/core5/{0} {1}"
+put="cp {0} /opt/stellar-core/history/core5/{1}"
+mkdir="mkdir -p /opt/stellar-core/history/core5/{0}"
+
+[HISTORY.core6]
+get="cp /opt/stellar-core/history/core6/{0} {1}"
+put="cp {0} /opt/stellar-core/history/core6/{1}"
+mkdir="mkdir -p /opt/stellar-core/history/core6/{0}"
+
+[HISTORY.core7]
+get="cp /opt/stellar-core/history/core7/{0} {1}"
+put="cp {0} /opt/stellar-core/history/core7/{1}"
+mkdir="mkdir -p /opt/stellar-core/history/core7/{0}"
+

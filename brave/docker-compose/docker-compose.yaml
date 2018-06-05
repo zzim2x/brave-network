@@ -12,68 +12,127 @@ services:
   db4:
     image: stellar/stellar-core-state
     volumes: ["db4-data:/var/lib/postgresql/data", "db4-unixsocket:/postgresql-unix-sockets"]
-  dbh:  # postgres for horizon
+  db5:
     image: stellar/stellar-core-state
-    volumes: ["dbh-data:/var/lib/postgresql/data", "dbh-unixsocket:/postgresql-unix-sockets"]
+    volumes: ["db5-data:/var/lib/postgresql/data", "db5-unixsocket:/postgresql-unix-sockets"]
+  db6:
+    image: stellar/stellar-core-state
+    volumes: ["db6-data:/var/lib/postgresql/data", "db6-unixsocket:/postgresql-unix-sockets"]
+  db7:
+    image: stellar/stellar-core-state
+    volumes: ["db7-data:/var/lib/postgresql/data", "db7-unixsocket:/postgresql-unix-sockets"]
+  dbh1:  # postgres for horizon
+    image: stellar/stellar-core-state
+    volumes: ["dbh1-data:/var/lib/postgresql/data", "dbh1-unixsocket:/postgresql-unix-sockets"]
+  dbh2:  # postgres for horizon
+    image: stellar/stellar-core-state
+    volumes: ["dbh2-data:/var/lib/postgresql/data", "dbh2-unixsocket:/postgresql-unix-sockets"]
 
-  horizon:
+  horizon1:
     image: zzim2x/stellar-horizon:0.12.3
     command: "initdb serve"
-    env_file: ["core.env"]
+    env_file: ["q1.env"]
     ports:
       - "8000:8000"
     environment:
       POSTGRES_UNIX_SOCKET: "/var/run/postgres"
       POSTGRES_CORE_UNIX_SOCKET: "/var/run/postgres-core"
-      STELLAR_CORE_URL: "http://core1:11626"
+      STELLAR_CORE_URL: "http://core2:11626"
       SERVE_OPTS: "--ingest=true"
-    volumes: ["db1-unixsocket:/var/run/postgres-core", "dbh-unixsocket:/var/run/postgres"]
-    depends_on: ["db1", "dbh", "core1"]
+    volumes: ["db2-unixsocket:/var/run/postgres-core", "dbh1-unixsocket:/var/run/postgres"]
+    depends_on: ["db2", "dbh1", "core2"]
+  
+  horizon2:
+    image: zzim2x/stellar-horizon:0.12.3
+    command: "initdb serve"
+    env_file: ["q2.env"]
+    ports:
+      - "8001:8000"
+    environment:
+      POSTGRES_UNIX_SOCKET: "/var/run/postgres"
+      POSTGRES_CORE_UNIX_SOCKET: "/var/run/postgres-core"
+      STELLAR_CORE_URL: "http://core7:11626"
+      SERVE_OPTS: "--ingest=true"
+    volumes: ["db7-unixsocket:/var/run/postgres-core", "dbh2-unixsocket:/var/run/postgres"]
+    depends_on: ["db7", "dbh2", "core7"]
 
   core1:
-    image: zzim2x/stellar-core-quorum:9.2.0
-    env_file: ["core.env"]
+    image: zzim2x/stellar-core-quorum:9.2.0-13d55680
+    env_file: ["q_inter.env"]
     command: "core1 initdb newhist forcescp"
-    volumes: ["db1-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
+    volumes: ["./q_inter.cfg.tmpl:/etc/confd/templates/stellar-core.cfg.tmpl", "db1-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
-      KNOWN_PEERS: '["core2", "core3", "core4"]'
+      KNOWN_PEERS: '["core2", "core3", "core4", "core5", "core6", "core7"]'
       COMMANDS: '["ll?level=debug"]'
     ports:
       - "11681:11626"
     depends_on: ["db1"]
   core2:
-    image: zzim2x/stellar-core-quorum:9.2.0
-    env_file: ["core.env"]
+    image: zzim2x/stellar-core-quorum:9.2.0-13d55680
+    env_file: ["q1.env"]
     command: "core2 initdb newhist forcescp"
-    volumes: ["db2-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
+    volumes: ["./q1.cfg.tmpl:/etc/confd/templates/stellar-core.cfg.tmpl", "db2-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core1", "core3", "core4"]'
-      COMMANDS: '["ll?level=debug"]'
+      # COMMANDS: '["ll?level=debug"]'
     ports:
       - "11682:11626"
     depends_on: ["db2"]
   core3:
-    image: zzim2x/stellar-core-quorum:9.2.0
-    env_file: ["core.env"]
+    image: zzim2x/stellar-core-quorum:9.2.0-13d55680
+    env_file: ["q1.env"]
     command: "core3 initdb newhist forcescp"
-    volumes: ["db3-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
+    volumes: ["./q1.cfg.tmpl:/etc/confd/templates/stellar-core.cfg.tmpl", "db3-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core1", "core2", "core4"]'
-      COMMANDS: '["ll?level=debug"]'
+#       COMMANDS: '["ll?level=debug"]'
     ports:
       - "11683:11626"
     depends_on: ["db3"]
   core4:
-    image: zzim2x/stellar-core-quorum:9.2.0
-    env_file: ["core.env"]
-    command: "core4 initdb newhist"
-    volumes: ["db4-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
+    image: zzim2x/stellar-core-quorum:9.2.0-13d55680
+    env_file: ["q1.env"]
+    command: "core4 initdb newhist forcescp"
+    volumes: ["./q1.cfg.tmpl:/etc/confd/templates/stellar-core.cfg.tmpl", "db4-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
     environment:
       KNOWN_PEERS: '["core1", "core2", "core3"]'
-      COMMANDS: '["ll?level=debug"]'
+      # COMMANDS: '["ll?level=debug"]'
     ports:
       - "11684:11626"
     depends_on: ["db4"]
+  core5:
+    image: zzim2x/stellar-core-quorum:9.2.0-13d55680
+    env_file: ["q2.env"]
+    command: "core5 initdb newhist forcescp"
+    volumes: ["./q2.cfg.tmpl:/etc/confd/templates/stellar-core.cfg.tmpl", "db5-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
+    environment:
+      KNOWN_PEERS: '["core1", "core6", "core7"]'
+      # COMMANDS: '["ll?level=debug"]'
+    ports:
+      - "11685:11626"
+    depends_on: ["db5"]
+  core6:
+    image: zzim2x/stellar-core-quorum:9.2.0-13d55680
+    env_file: ["q2.env"]
+    command: "core6 initdb newhist forcescp"
+    volumes: ["./q2.cfg.tmpl:/etc/confd/templates/stellar-core.cfg.tmpl", "db6-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
+    environment:
+      KNOWN_PEERS: '["core1", "core5", "core7"]'
+      # COMMANDS: '["ll?level=debug"]'
+    ports:
+      - "11686:11626"
+    depends_on: ["db6"]
+  core7:
+    image: zzim2x/stellar-core-quorum:9.2.0-13d55680
+    env_file: ["q2.env"]
+    command: "core7 initdb newhist forcescp"
+    volumes: ["./q2.cfg.tmpl:/etc/confd/templates/stellar-core.cfg.tmpl", "db7-unixsocket:/var/run/postgres", "history-data:/opt/stellar-core/history"]
+    environment:
+      KNOWN_PEERS: '["core1", "core5", "core6"]'
+      COMMANDS: '["ll?level=debug"]'
+    ports:
+      - "11687:11626"
+    depends_on: ["db7"]
 volumes:
   db1-data:
   db1-unixsocket:
@@ -83,6 +142,14 @@ volumes:
   db3-unixsocket:
   db4-data:
   db4-unixsocket:
-  dbh-data:
-  dbh-unixsocket:
+  db5-data:
+  db5-unixsocket:
+  db6-data:
+  db6-unixsocket:
+  db7-data:
+  db7-unixsocket:
+  dbh1-data:
+  dbh1-unixsocket:
+  dbh2-data:
+  dbh2-unixsocket:
   history-data:
